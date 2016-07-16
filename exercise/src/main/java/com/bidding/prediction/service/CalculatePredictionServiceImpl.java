@@ -1,8 +1,10 @@
 package com.bidding.prediction.service;
 
 import java.util.Map;
+import java.util.Set;
 
-import com.bidding.calculator.LogisticRegressionCalculator;
+import com.bidding.prediction.builder.FeatureNameBuilder;
+import com.bidding.prediction.calculator.LogisticRegressionCalculator;
 import com.bidding.prediction.domain.persistence.CoefficientRepository;
 
 public class CalculatePredictionServiceImpl implements
@@ -10,19 +12,24 @@ public class CalculatePredictionServiceImpl implements
 
 	private CoefficientRepository coefficientRepository;
 	private LogisticRegressionCalculator logisticRegressionCalculator;
+	private FeatureNameBuilder featureNameBuilder;
 
 	public CalculatePredictionServiceImpl(
 			CoefficientRepository coefficientRepository,
-			LogisticRegressionCalculator logisticRegressionCalculator) {
+			LogisticRegressionCalculator logisticRegressionCalculator,
+			FeatureNameBuilder featureNameBuilder) {
 		this.coefficientRepository = coefficientRepository;
 		this.logisticRegressionCalculator = logisticRegressionCalculator;
+		this.featureNameBuilder = featureNameBuilder;
 	}
 
 	@Override
 	public Double predict(Map<String, String> features) {
 
+		Set<String> featureNames = featureNameBuilder.getFeatureNames(features);
+
 		Map<String, Double> coefficientsByFeature = coefficientRepository
-				.getCoefficients(features);
+				.getCoefficients(featureNames);
 
 		return logisticRegressionCalculator
 				.getLogisticRegression(coefficientsByFeature);
