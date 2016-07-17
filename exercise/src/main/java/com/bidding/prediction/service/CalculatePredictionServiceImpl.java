@@ -37,10 +37,16 @@ public class CalculatePredictionServiceImpl implements
 		Map<String, BigDecimal> coefficientsByFeature = coefficientRepository
 				.getCoefficients(featureNames);
 
-		List<BigDecimal> newArrayList = Lists
-				.newArrayList(coefficientsByFeature.values());
+		List<BigDecimal> coefficients = obtainCoefficients(coefficientsByFeature);
 		
-		return logisticRegressionCalculator.getLogisticRegression(newArrayList);
+		return logisticRegressionCalculator.getLogisticRegression(coefficients);
+	}
+
+	private List<BigDecimal> obtainCoefficients(
+			Map<String, BigDecimal> coefficientsByFeature) {
+		List<BigDecimal> coefficients = Lists
+				.newArrayList(coefficientsByFeature.values());
+		return coefficients;
 	}
 
 	private void addBiasCoefficient(Set<String> featureNames) {

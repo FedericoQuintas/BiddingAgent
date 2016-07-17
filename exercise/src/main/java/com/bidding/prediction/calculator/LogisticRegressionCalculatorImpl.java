@@ -11,13 +11,14 @@ public class LogisticRegressionCalculatorImpl implements
 			List<BigDecimal> coefficientsByFeature) {
 
 		BigDecimal total = sumCoefficients(coefficientsByFeature);
+	
 		return logisticFunction(total);
 	}
 
 	private BigDecimal sumCoefficients(List<BigDecimal> coefficientsByFeature) {
 		BigDecimal total = new BigDecimal(0);
 		for (BigDecimal coefficient : coefficientsByFeature) {
-			total.add(coefficient);
+			total = total.add(coefficient);
 		}
 		return total;
 	}
