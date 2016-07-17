@@ -1,6 +1,7 @@
 package com.bidding.prediction.persistence;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,11 +15,11 @@ import com.google.common.collect.Maps;
 public class CoefficientRepositoryImpl implements CoefficientRepository {
 
 	private static final String KEY_MODEL = "model";
+	
 	private Jedis jedis;
 
 	public CoefficientRepositoryImpl(Jedis jedis) {
 		this.jedis = jedis;
-
 	}
 
 	@Override
@@ -26,12 +27,25 @@ public class CoefficientRepositoryImpl implements CoefficientRepository {
 
 		Map<String, BigDecimal> coefficientsByFeature = Maps.newHashMap();
 
-		for (String featureName : featureNames) {
-			String coefficient = jedis.hget(KEY_MODEL, featureName);
-			fillMap(coefficientsByFeature, featureName, coefficient);
+		String[] names = convertToStringArray(featureNames);
+
+		List<String> coefficients = jedis.hmget(KEY_MODEL, names);
+
+		for (int j = 0; j < names.length; j++) {
+			fillMap(coefficientsByFeature, names[j], coefficients.get(j));
 		}
 
 		return coefficientsByFeature;
+	}
+
+	private String[] convertToStringArray(Set<String> featureNames) {
+		String[] names = new String[featureNames.size()];
+		int position = 0;
+		for (String featureName : featureNames) {
+			names[position] = featureName;
+			position++;
+		}
+		return names;
 	}
 
 	private void fillMap(Map<String, BigDecimal> coefficientsByFeature,

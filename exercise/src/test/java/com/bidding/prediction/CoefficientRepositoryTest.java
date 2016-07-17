@@ -62,6 +62,7 @@ public class CoefficientRepositoryTest {
 
 	@Before
 	public void before() {
+		
 		jedis.flushAll();
 
 		coefficientRepository = new CoefficientRepositoryImpl(jedis);
@@ -108,8 +109,6 @@ public class CoefficientRepositoryTest {
 
 	@AfterClass
 	public static void afterClass() {
-
 		server.stop();
-
 	}
 }
