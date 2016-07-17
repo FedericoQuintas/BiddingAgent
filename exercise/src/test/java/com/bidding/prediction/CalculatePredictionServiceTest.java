@@ -3,6 +3,7 @@ package com.bidding.prediction;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
 
@@ -77,7 +78,7 @@ public class CalculatePredictionServiceTest {
 	@Test
 	public void whenAsksForPredictionThenServiceObtainResultFromLogisticRegressionCalculator() {
 
-		Map<String, Double> coefficientsByFeature = Maps.newHashMap();
+		Map<String, BigDecimal> coefficientsByFeature = Maps.newHashMap();
 
 		Set<String> featureNames = Sets.newHashSet();
 
@@ -97,16 +98,16 @@ public class CalculatePredictionServiceTest {
 	@Test
 	public void whenCalculatorRetrievesANumberThenServiceRetrievesSameNumber() {
 
-		Map<String, Double> coefficientsByFeature = Maps.newHashMap();
+		Map<String, BigDecimal> coefficientsByFeature = Maps.newHashMap();
 
 		when(
 				logisticRegressionCalculator
 						.getLogisticRegression(coefficientsByFeature))
-				.thenReturn(new Double(10));
+				.thenReturn(new BigDecimal(10));
 
-		Double result = calculatePredictionService.predict(features);
+		BigDecimal result = calculatePredictionService.predict(features);
 
-		Assert.assertEquals(new Double(10), result);
+		Assert.assertEquals(new BigDecimal(10), result);
 
 	}
 }

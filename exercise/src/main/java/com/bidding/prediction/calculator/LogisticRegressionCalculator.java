@@ -1,9 +1,11 @@
 package com.bidding.prediction.calculator;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 public interface LogisticRegressionCalculator {
 
-	Double getLogisticRegression(Map<String, Double> coefficientsByFeature);
+	BigDecimal getLogisticRegression(
+			Map<String, BigDecimal> coefficientsByFeature);
 
 }

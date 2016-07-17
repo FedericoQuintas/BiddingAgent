@@ -13,6 +13,7 @@
 		<mockito.version>1.10.19</mockito.version>
 		<jetty.version>9.0.0.M3</jetty.version>
 		<jedis.version>2.8.0</jedis.version>
+		<apache.version>3.0</apache.version>
 	</properties>
 	<build>
 		<plugins>
@@ -70,6 +71,25 @@
 			<version>${jedis.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${apache.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-redis</artifactId>
+			<version>1.4.1.RELEASE</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.kstyrc</groupId>
+			<artifactId>embedded-redis</artifactId>
+			<version>0.6</version>
 		</dependency>
 	</dependencies>
 </project>

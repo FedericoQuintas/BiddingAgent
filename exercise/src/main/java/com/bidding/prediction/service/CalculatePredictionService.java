@@ -1,9 +1,10 @@
 package com.bidding.prediction.service;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 public interface CalculatePredictionService {
 
-	Double predict(Map<String, String> features);
+	BigDecimal predict(Map<String, String> features);
 
 }

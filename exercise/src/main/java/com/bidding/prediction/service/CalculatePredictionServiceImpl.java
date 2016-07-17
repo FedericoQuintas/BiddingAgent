@@ -1,5 +1,6 @@
 package com.bidding.prediction.service;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,11 +25,11 @@ public class CalculatePredictionServiceImpl implements
 	}
 
 	@Override
-	public Double predict(Map<String, String> features) {
+	public BigDecimal predict(Map<String, String> features) {
 
 		Set<String> featureNames = featureNameBuilder.getFeatureNames(features);
 
-		Map<String, Double> coefficientsByFeature = coefficientRepository
+		Map<String, BigDecimal> coefficientsByFeature = coefficientRepository
 				.getCoefficients(featureNames);
 
 		return logisticRegressionCalculator
