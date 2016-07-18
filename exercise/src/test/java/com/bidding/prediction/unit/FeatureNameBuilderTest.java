@@ -13,6 +13,10 @@ import com.google.common.collect.Maps;
 
 public class FeatureNameBuilderTest {
 
+	private static final String DEVICE_EXT_BROWSER_CHROME = "deviceExtBrowser=Chrome";
+
+	private static final String BANNER_EXT_SIZE_0X0 = "bannerExtSize=0x0";
+
 	private static final String EQUAL = "=";
 
 	private FeatureNameBuilder featureNameBuilder;
@@ -28,7 +32,7 @@ public class FeatureNameBuilderTest {
 
 		features = Maps.newHashMap();
 
-		featureName = "deviceExtBrowser=Chrome";
+		featureName = DEVICE_EXT_BROWSER_CHROME;
 
 		coefficient = new Double(0.2102317412);
 
@@ -64,7 +68,7 @@ public class FeatureNameBuilderTest {
 	@Test
 	public void whenBuilderReceivesTwoKeysThenRetrievesAListWithTwoNames() {
 
-		String secondFeatureName = "bannerExtSize=0x0";
+		String secondFeatureName = BANNER_EXT_SIZE_0X0;
 
 		Double secondCoefficient = new Double(1.616892819);
 

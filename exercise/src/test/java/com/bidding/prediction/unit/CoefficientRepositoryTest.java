@@ -22,6 +22,8 @@ import com.google.common.collect.Sets;
 
 public class CoefficientRepositoryTest {
 
+	private static final String DEVICE_LANGUAGE_PL = "deviceLanguage=pl";
+
 	private static final String MODEL = "model";
 
 	private static final int PORT = 6380;
@@ -82,9 +84,9 @@ public class CoefficientRepositoryTest {
 	@Test
 	public void whenTwoCoefficientsAreAskedThenJedisRetrievesBoth() {
 
-		String secondFeatureName = "deviceLanguage=pl";
+		String secondFeatureName = DEVICE_LANGUAGE_PL;
 
-		BigDecimal secondCoefficient = new BigDecimal("1.266865912").negate();
+		BigDecimal secondCoefficient = new BigDecimal(1.266865912).negate();
 
 		jedis.hset(MODEL, secondFeatureName, secondCoefficient.toString());
 

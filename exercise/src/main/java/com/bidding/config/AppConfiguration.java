@@ -17,6 +17,8 @@ import com.bidding.prediction.persistence.CoefficientRepositoryImpl;
 import com.bidding.prediction.resource.CalculatePredictionResource;
 import com.bidding.prediction.service.CalculatePredictionService;
 import com.bidding.prediction.service.CalculatePredictionServiceImpl;
+import com.bidding.prediction.validator.FeaturesValidator;
+import com.bidding.prediction.validator.InvalidFeaturesValidator;
 
 @Configuration
 @EnableWebMvc
@@ -25,17 +27,21 @@ public class AppConfiguration {
 	private static final String LOCALHOST = "localhost";
 
 	@Bean
-	public CalculatePredictionService calculatePredictionService(
-			CoefficientRepository coefficientRepository,
-			LogisticRegressionCalculator logisticRegressionCalculator,
-			FeatureNameBuilder featureNameBuilder) {
-		return new CalculatePredictionServiceImpl(coefficientRepository,
-				logisticRegressionCalculator, featureNameBuilder);
+	public CalculatePredictionService calculatePredictionService(CoefficientRepository coefficientRepository,
+			LogisticRegressionCalculator logisticRegressionCalculator, FeatureNameBuilder featureNameBuilder,
+			FeaturesValidator featuresValidator) {
+		return new CalculatePredictionServiceImpl(coefficientRepository, logisticRegressionCalculator,
+				featureNameBuilder, featuresValidator);
 	}
 
 	@Bean
 	public FeatureNameBuilder featureNameBuilder() {
 		return new AppendFeatureNameBuilder();
+	}
+
+	@Bean
+	public FeaturesValidator featuresValidator() {
+		return new InvalidFeaturesValidator();
 	}
 
 	@Bean
@@ -47,15 +53,13 @@ public class AppConfiguration {
 	@Bean
 	public CoefficientRepository coefficientRepository() {
 
-		Jedis jedis = new JedisPool(new JedisPoolConfig(), LOCALHOST, 6379)
-				.getResource();
+		Jedis jedis = new JedisPool(new JedisPoolConfig(), LOCALHOST, 6379).getResource();
 
 		return new CoefficientRepositoryImpl(jedis);
 	}
 
 	@Bean
-	public CalculatePredictionResource calculatePredictionResource(
-			CalculatePredictionService calculatePredictionService) {
+	public CalculatePredictionResource calculatePredictionResource(CalculatePredictionService calculatePredictionService) {
 		return new CalculatePredictionResource(calculatePredictionService);
 	}
 

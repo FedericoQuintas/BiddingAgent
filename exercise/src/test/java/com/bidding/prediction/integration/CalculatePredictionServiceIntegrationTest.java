@@ -20,6 +20,7 @@ import com.bidding.prediction.calculator.LogisticRegressionCalculatorImpl;
 import com.bidding.prediction.persistence.CoefficientRepositoryImpl;
 import com.bidding.prediction.service.CalculatePredictionService;
 import com.bidding.prediction.service.CalculatePredictionServiceImpl;
+import com.bidding.prediction.validator.InvalidFeaturesValidator;
 import com.google.common.collect.Maps;
 
 public class CalculatePredictionServiceIntegrationTest {
@@ -75,10 +76,8 @@ public class CalculatePredictionServiceIntegrationTest {
 
 		features = Maps.newHashMap();
 
-		calculatePredictionService = new CalculatePredictionServiceImpl(
-				new CoefficientRepositoryImpl(jedis),
-				new LogisticRegressionCalculatorImpl(),
-				new AppendFeatureNameBuilder());
+		calculatePredictionService = new CalculatePredictionServiceImpl(new CoefficientRepositoryImpl(jedis),
+				new LogisticRegressionCalculatorImpl(), new AppendFeatureNameBuilder(), new InvalidFeaturesValidator());
 	}
 
 	@Test
@@ -86,8 +85,7 @@ public class CalculatePredictionServiceIntegrationTest {
 
 		insertValue(DEVICE_LANGUAGE_DE, new BigDecimal(_0_1935418172).negate());
 
-		insertValue(DEVICE_EXT_BROWSER_FIREFOX,
-				new BigDecimal(_0_1131013246).negate());
+		insertValue(DEVICE_EXT_BROWSER_FIREFOX, new BigDecimal(_0_1131013246).negate());
 
 		insertValue(BANNER_EXT_SIZE_800X250, new BigDecimal(_0_1692596709));
 

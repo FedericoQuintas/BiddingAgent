@@ -1,5 +1,6 @@
 package com.bidding.prediction.unit;
 
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -18,13 +19,17 @@ import org.mockito.MockitoAnnotations;
 import com.bidding.prediction.builder.FeatureNameBuilder;
 import com.bidding.prediction.calculator.LogisticRegressionCalculator;
 import com.bidding.prediction.domain.persistence.CoefficientRepository;
+import com.bidding.prediction.exception.InvalidFeaturesException;
 import com.bidding.prediction.service.CalculatePredictionService;
 import com.bidding.prediction.service.CalculatePredictionServiceImpl;
+import com.bidding.prediction.validator.InvalidFeaturesValidator;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class CalculatePredictionServiceUnitTest {
+
+	private static final String INVALID_FEATURES_INPUT = "Invalid features input";
 
 	private static final String BIAS = "bias";
 
@@ -41,13 +46,15 @@ public class CalculatePredictionServiceUnitTest {
 	@Mock
 	private FeatureNameBuilder featureNameBuilder;
 
+	@Mock
+	private InvalidFeaturesValidator invalidFeaturesValidator;
+
 	@Before
 	public void before() {
 		MockitoAnnotations.initMocks(this);
 		features = Maps.newHashMap();
-		calculatePredictionService = new CalculatePredictionServiceImpl(
-				coefficientRepository, logisticRegressionCalculator,
-				featureNameBuilder);
+		calculatePredictionService = new CalculatePredictionServiceImpl(coefficientRepository,
+				logisticRegressionCalculator, featureNameBuilder, invalidFeaturesValidator);
 	}
 
 	@Test
@@ -64,8 +71,7 @@ public class CalculatePredictionServiceUnitTest {
 
 		Set<String> featureNames = Sets.newHashSet();
 
-		when(featureNameBuilder.getFeatureNames(features)).thenReturn(
-				featureNames);
+		when(featureNameBuilder.getFeatureNames(features)).thenReturn(featureNames);
 
 		calculatePredictionService.predict(features);
 
@@ -80,19 +86,15 @@ public class CalculatePredictionServiceUnitTest {
 
 		Set<String> featureNames = Sets.newHashSet();
 
-		when(featureNameBuilder.getFeatureNames(features)).thenReturn(
-				featureNames);
+		when(featureNameBuilder.getFeatureNames(features)).thenReturn(featureNames);
 
-		when(coefficientRepository.getCoefficients(featureNames)).thenReturn(
-				coefficientsByFeature);
+		when(coefficientRepository.getCoefficients(featureNames)).thenReturn(coefficientsByFeature);
 
-		List<BigDecimal> coefficients = Lists
-				.newArrayList(coefficientsByFeature.values());
+		List<BigDecimal> coefficients = Lists.newArrayList(coefficientsByFeature.values());
 
 		calculatePredictionService.predict(features);
 
-		verify(logisticRegressionCalculator)
-				.getLogisticRegression(coefficients);
+		verify(logisticRegressionCalculator).getLogisticRegression(coefficients);
 
 	}
 
@@ -101,8 +103,7 @@ public class CalculatePredictionServiceUnitTest {
 
 		List<BigDecimal> coefficients = Lists.newArrayList();
 
-		when(logisticRegressionCalculator.getLogisticRegression(coefficients))
-				.thenReturn(new BigDecimal(10));
+		when(logisticRegressionCalculator.getLogisticRegression(coefficients)).thenReturn(new BigDecimal(10));
 
 		BigDecimal result = calculatePredictionService.predict(features);
 
@@ -114,15 +115,43 @@ public class CalculatePredictionServiceUnitTest {
 	@Test
 	public void whenAsksForPredictionThenServiceAddsTheBiasCoefficient() {
 
-		ArgumentCaptor<Set> coefficientsCaptor = ArgumentCaptor
-				.forClass(Set.class);
+		ArgumentCaptor<Set> coefficientsCaptor = ArgumentCaptor.forClass(Set.class);
 
 		calculatePredictionService.predict(features);
 
-		verify(coefficientRepository).getCoefficients(
-				coefficientsCaptor.capture());
+		verify(coefficientRepository).getCoefficients(coefficientsCaptor.capture());
 
 		Assert.assertTrue(coefficientsCaptor.getValue().contains(BIAS));
+
+	}
+
+	@Test
+	public void whenAsksForPredictionWithEmptyFeaturesThenExceptionIsThrown() {
+
+		calculatePredictionService = new CalculatePredictionServiceImpl(coefficientRepository,
+				logisticRegressionCalculator, featureNameBuilder, new InvalidFeaturesValidator());
+
+		try {
+			calculatePredictionService.predict(features);
+			fail();
+		} catch (InvalidFeaturesException exception) {
+			Assert.assertEquals(INVALID_FEATURES_INPUT, exception.getMessage());
+		}
+
+	}
+
+	@Test
+	public void whenAsksForPredictionWithNullFeaturesThenExceptionIsThrown() {
+
+		calculatePredictionService = new CalculatePredictionServiceImpl(coefficientRepository,
+				logisticRegressionCalculator, featureNameBuilder, new InvalidFeaturesValidator());
+
+		try {
+			calculatePredictionService.predict(null);
+			fail();
+		} catch (InvalidFeaturesException exception) {
+			Assert.assertEquals(INVALID_FEATURES_INPUT, exception.getMessage());
+		}
 
 	}
 }
