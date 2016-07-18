@@ -28,13 +28,17 @@ import com.google.common.collect.Maps;
 
 public class CalculatePredictionServiceIntegrationTest {
 
+	private static final double _6_21176449 = 6.21176449;
+
+	private static final String BIAS = "bias";
+
 	private static final String DEVICE_EXT_TYPE = "deviceExtType";
 
 	private static final String TABLET = "tablet";
 
 	private static final String DE = "de";
 
-	private static final String _800X250 = "800X250";
+	private static final String _300X250 = "300x250";
 
 	private static final String FIREFOX = "Firefox";
 
@@ -46,11 +50,11 @@ public class CalculatePredictionServiceIntegrationTest {
 
 	private static final String DEVICE_EXT_TYPE_TABLET = "deviceExtType=tablet";
 
-	private static final String BANNER_EXT_SIZE_800X250 = "bannerExtSize=800x250";
+	private static final String BANNER_EXT_SIZE_300X250 = "bannerExtSize=300x250";
 
 	private static final String _0_7294739471 = "0.7294739471";
 
-	private static final String _0_1692596709 = "0.1692596709";
+	private static final String _0_6282185905 = "0.6282185905";
 
 	private static final String _0_1935418172 = "0.1935418172";
 
@@ -108,15 +112,17 @@ public class CalculatePredictionServiceIntegrationTest {
 
 		insertValue(DEVICE_EXT_BROWSER_FIREFOX, new BigDecimal(_0_1131013246).negate());
 
-		insertValue(BANNER_EXT_SIZE_800X250, new BigDecimal(_0_1692596709));
+		insertValue(BANNER_EXT_SIZE_300X250, new BigDecimal(_0_6282185905).negate());
 
 		insertValue(DEVICE_EXT_TYPE_TABLET, new BigDecimal(_0_7294739471));
+		
+		insertValue(BIAS, new BigDecimal(_6_21176449).negate());
 
 		features.put(DEVICE_LANGUAGE, DE);
 
 		features.put(DEVICE_EXT_BROWSER, FIREFOX);
-
-		features.put(BANNER_EXT_SIZE, _800X250);
+		
+		features.put(BANNER_EXT_SIZE, _300X250);
 
 		features.put(DEVICE_EXT_TYPE, TABLET);
 
@@ -124,7 +130,9 @@ public class CalculatePredictionServiceIntegrationTest {
 
 		BigDecimal expectedCTR = new BigDecimal(0.0016306374);
 
-		Assert.assertEquals(expectedCTR, prediction);
+		double delta = 0.0000000001d;
+		
+		Assert.assertEquals(expectedCTR.doubleValue(), prediction.doubleValue(), delta);
 
 	}
 
