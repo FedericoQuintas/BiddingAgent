@@ -5,21 +5,16 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.Assert;
-
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.core.env.Environment;
-import org.springframework.web.context.support.StandardServletEnvironment;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
-import redis.embedded.RedisExecProvider;
 import redis.embedded.RedisServer;
-import redis.embedded.util.OS;
 
 import com.bidding.prediction.domain.persistence.CoefficientRepository;
 import com.bidding.prediction.persistence.CoefficientRepositoryImpl;
@@ -32,8 +27,6 @@ public class CoefficientRepositoryTest {
 	private static final int PORT = 6380;
 
 	private static final String LOCALHOST = "localhost";
-
-	private static final String REDIS_PATH = "REDIS_PATH";
 
 	private static Jedis jedis;
 
@@ -51,10 +44,7 @@ public class CoefficientRepositoryTest {
 	@BeforeClass
 	public static void beforeClass() throws IOException {
 
-		RedisExecProvider customProvider = RedisExecProvider.defaultProvider()
-				.override(OS.UNIX, System.getenv().get(REDIS_PATH));
-		// "/home/fede/redis-3.2.1/src/redis-server"
-		server = new RedisServer(customProvider, PORT);
+		server = new RedisServer(PORT);
 
 		server.start();
 
@@ -83,8 +73,7 @@ public class CoefficientRepositoryTest {
 	@Test
 	public void whenACoefficientIsAskedThenJedisRetrievesTheCoefficient() {
 
-		Map<String, BigDecimal> coefficients = coefficientRepository
-				.getCoefficients(featureNames);
+		Map<String, BigDecimal> coefficients = coefficientRepository.getCoefficients(featureNames);
 
 		Assert.assertEquals(coefficient, coefficients.get(featureName));
 
@@ -101,13 +90,11 @@ public class CoefficientRepositoryTest {
 
 		featureNames.add(secondFeatureName);
 
-		Map<String, BigDecimal> coefficients = coefficientRepository
-				.getCoefficients(featureNames);
+		Map<String, BigDecimal> coefficients = coefficientRepository.getCoefficients(featureNames);
 
 		Assert.assertEquals(coefficient, coefficients.get(featureName));
 
-		Assert.assertEquals(secondCoefficient,
-				coefficients.get(secondFeatureName));
+		Assert.assertEquals(secondCoefficient, coefficients.get(secondFeatureName));
 
 	}
 

@@ -3,8 +3,7 @@ package com.bidding.prediction.unit;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 

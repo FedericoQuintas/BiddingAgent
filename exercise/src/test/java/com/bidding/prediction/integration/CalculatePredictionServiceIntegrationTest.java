@@ -13,9 +13,7 @@ import org.junit.Test;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
-import redis.embedded.RedisExecProvider;
 import redis.embedded.RedisServer;
-import redis.embedded.util.OS;
 
 import com.bidding.prediction.builder.AppendFeatureNameBuilder;
 import com.bidding.prediction.calculator.LogisticRegressionCalculatorImpl;
@@ -60,10 +58,7 @@ public class CalculatePredictionServiceIntegrationTest {
 	@BeforeClass
 	public static void beforeClass() throws IOException {
 
-		RedisExecProvider customProvider = RedisExecProvider.defaultProvider()
-				.override(OS.UNIX, "/home/fede/redis-3.2.1/src/redis-server");
-
-		server = new RedisServer(customProvider, PORT);
+		server = new RedisServer(PORT);
 
 		server.start();
 
