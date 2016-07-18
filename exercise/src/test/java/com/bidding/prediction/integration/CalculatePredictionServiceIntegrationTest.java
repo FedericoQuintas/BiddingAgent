@@ -1,5 +1,7 @@
 package com.bidding.prediction.integration;
 
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Map;
@@ -17,6 +19,7 @@ import redis.embedded.RedisServer;
 
 import com.bidding.prediction.builder.AppendFeatureNameBuilder;
 import com.bidding.prediction.calculator.LogisticRegressionCalculatorImpl;
+import com.bidding.prediction.exception.InvalidFeaturesException;
 import com.bidding.prediction.persistence.CoefficientRepositoryImpl;
 import com.bidding.prediction.service.CalculatePredictionService;
 import com.bidding.prediction.service.CalculatePredictionServiceImpl;
@@ -24,6 +27,22 @@ import com.bidding.prediction.validator.InvalidFeaturesValidator;
 import com.google.common.collect.Maps;
 
 public class CalculatePredictionServiceIntegrationTest {
+
+	private static final String DEVICE_EXT_TYPE = "deviceExtType";
+
+	private static final String TABLET = "tablet";
+
+	private static final String DE = "de";
+
+	private static final String _800X250 = "800X250";
+
+	private static final String FIREFOX = "Firefox";
+
+	private static final String BANNER_EXT_SIZE = "bannerExtSize";
+
+	private static final String DEVICE_EXT_BROWSER = "deviceExtBrowser";
+
+	private static final String DEVICE_LANGUAGE = "deviceLanguage";
 
 	private static final String DEVICE_EXT_TYPE_TABLET = "deviceExtType=tablet";
 
@@ -46,6 +65,8 @@ public class CalculatePredictionServiceIntegrationTest {
 	private Map<String, String> features;
 
 	private static final String MODEL = "model";
+
+	private static final String INVALID_FEATURES_INPUT = "Invalid features input";
 
 	private static final int PORT = 6380;
 
@@ -91,11 +112,43 @@ public class CalculatePredictionServiceIntegrationTest {
 
 		insertValue(DEVICE_EXT_TYPE_TABLET, new BigDecimal(_0_7294739471));
 
+		features.put(DEVICE_LANGUAGE, DE);
+
+		features.put(DEVICE_EXT_BROWSER, FIREFOX);
+
+		features.put(BANNER_EXT_SIZE, _800X250);
+
+		features.put(DEVICE_EXT_TYPE, TABLET);
+
 		BigDecimal prediction = calculatePredictionService.predict(features);
 
 		BigDecimal expectedCTR = new BigDecimal(0.0016306374);
 
 		Assert.assertEquals(expectedCTR, prediction);
+
+	}
+
+	@Test
+	public void whenAsksForPredictionWithEmptyFeaturesThenExceptionIsThrown() {
+
+		try {
+			calculatePredictionService.predict(features);
+			fail();
+		} catch (InvalidFeaturesException exception) {
+			Assert.assertEquals(INVALID_FEATURES_INPUT, exception.getMessage());
+		}
+
+	}
+
+	@Test
+	public void whenAsksForPredictionWithNullFeaturesThenExceptionIsThrown() {
+
+		try {
+			calculatePredictionService.predict(null);
+			fail();
+		} catch (InvalidFeaturesException exception) {
+			Assert.assertEquals(INVALID_FEATURES_INPUT, exception.getMessage());
+		}
 
 	}
 
